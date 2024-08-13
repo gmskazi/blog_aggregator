@@ -36,24 +36,19 @@ func main() {
 		log.Fatalf("Could not open the database: %v", err)
 	}
 
-	dbQueries := database.New(db)
-
-	cfg := apiConfig{
-		DB: dbQueries,
+	apiCfg := apiConfig{
+		DB: database.New(db),
 	}
-
-	// NOTE: Up to #11 Create an http handler to create a user
-
-	const filepathRoot = "."
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /v1/healthz", handlerHealthCheck)
 	mux.HandleFunc("GET /v1/err", handlerError)
+	mux.HandleFunc("POST /v1/users", apiCfg.handlerUserCreate)
 
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: mux,
 	}
-	log.Printf("Serving files from %s on port: %s\n", filepathRoot, port)
+	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(srv.ListenAndServe())
 }
