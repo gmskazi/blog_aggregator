@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gmskazi/blog_aggregator/auth"
 	"github.com/gmskazi/blog_aggregator/internal/database"
 	"github.com/google/uuid"
 )
@@ -38,18 +37,6 @@ func (cfg *apiConfig) handlerUserCreate(w http.ResponseWriter, r *http.Request) 
 	respondWithJSON(w, http.StatusOK, databaseUserToUser(user))
 }
 
-func (cfg *apiConfig) handlerUserByAPIKEY(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := auth.GetApiKeyToken(r.Header)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Couldn't find APIKEY")
-		return
-	}
-
-	user, err := cfg.DB.GetUserByAPIKEY(r.Context(), apiKey)
-	if err != nil {
-		respondWithError(w, http.StatusNotFound, "Couldn't find user")
-		return
-	}
-
+func (cfg *apiConfig) handlerUserGet(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJSON(w, http.StatusOK, databaseUserToUser(user))
 }
