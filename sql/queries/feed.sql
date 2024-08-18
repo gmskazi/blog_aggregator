@@ -6,3 +6,7 @@ RETURNING *;
 -- name: GetFeeds :one
 SELECT * FROM feeds
 WHERE user_id = $1;
+
+-- name: GetAllFeeds :many
+SELECT * FROM feeds
+ORDER BY user_id;
