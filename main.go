@@ -43,10 +43,15 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /v1/healthz", handlerHealthCheck)
 	mux.HandleFunc("GET /v1/err", handlerError)
+
 	mux.HandleFunc("POST /v1/users", apiCfg.handlerUserCreate)
 	mux.HandleFunc("GET /v1/users", apiCfg.middlewareAuth(apiCfg.handlerUserGet))
 	mux.HandleFunc("POST /v1/feeds", apiCfg.middlewareAuth(apiCfg.handlerFeedCreate))
 	mux.HandleFunc("GET /v1/feeds", apiCfg.handlerGetFeeds)
+
+	mux.HandleFunc("GET /v1/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerFeedFollowsGet))
+	mux.HandleFunc("POST /v1/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerFeedFollowCreate))
+	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerFeedFollowDelete))
 
 	srv := &http.Server{
 		Addr:    ":" + port,
